@@ -1,0 +1,1 @@
+C:\Users\universuen\PycharmProjects\auto_wallpaper\venv\Scripts\activate.bat && python C:\Users\universuen\PycharmProjects\auto_wallpaper\auto_wallpaper.py
