@@ -3,6 +3,10 @@ import ctypes
 
 import requests
 from bs4 import BeautifulSoup
+from sytk import get_logger
+from datetime import datetime
+
+logger = get_logger('AW', 'DEBUG', fmt='[%(name)-10s] %(levelname)-8s: %(message)s', filename='log.txt', mode='a')
 
 
 def get_content(url):
@@ -23,7 +27,7 @@ def set_wallpaper():
 
 
 if __name__ == '__main__':
-    import traceback
+    logger.debug(f'started at {datetime.now()}')
     try:
         if os.path.exists('wallpaper.jpg'):
             set_wallpaper()
@@ -31,12 +35,15 @@ if __name__ == '__main__':
         raw = get_content("https://cn.bing.com/?FORM=UNKSBD")
         parsed_html = BeautifulSoup(raw, features="html.parser")
         sub_address = parsed_html.body.find(id="bgImgProgLoad").attrs['data-ultra-definition-src']
-        img = get_content(f"https://www.bing.com{sub_address}")
+        img_url = f'https://www.bing.com{sub_address}'
+        logger.debug(f'got image url: {img_url}')
+        img = get_content(img_url)
         with open('wallpaper.jpg', 'wb') as f:
-                f.write(img)
+            f.write(img)
+            logger.debug('image wrote')
         set_wallpaper()
-    except Exception:
-        with open('log.txt', 'w') as f:
-            traceback.print_exc(file=f)
-
-
+    except Exception as e:
+        logger.error(e)
+    finally:
+        with open('log.txt', 'a') as f:
+            f.write('\n')
